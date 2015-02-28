@@ -1,0 +1,39 @@
+{
+  "name": "Element-Detective",
+  "version": "1.0.0",
+  "description": "Find the string index of an element",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OrganicPanda/Element-Detective.git"
+  },
+  "keywords": [
+    "DOM"
+  ],
+  "author": "Steve Thomson <organicpanda@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OrganicPanda/Element-Detective/issues"
+  },
+  "homepage": "https://github.com/OrganicPanda/Element-Detective",
+  "scripts": {
+    "test": "./node_modules/karma/bin/karma start --single-run",
+    "test-watch": "./node_modules/karma/bin/karma start",
+    "watch": "watch 'npm run build' ./src",
+    "watch-test": "parallelshell 'npm run test-watch' 'npm run watch'",
+    "build": "npm run build-es6 && npm run build-umd && npm run build-global && npm run uglify",
+    "build-es6": "cp src/detective.js dist/detective-es6.js",
+    "build-umd": "babel src/detective.js --out-file dist/detective-es5-umd.js --modules umd",
+    "build-global": "babel src/detective.js --out-file dist/detective-es5-global.js --modules ignore",
+    "uglify": "uglifyjs --compress --mangle -o dist/detective-es5-global.min.js -- dist/detective-es5-global.js"
+  },
+  "devDependencies": {
+    "babel": "^4.6.1",
+    "jasmine-core": "^2.2.0",
+    "karma": "^0.12.31",
+    "karma-jasmine": "^0.3.5",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "parallelshell": "^1.0.4",
+    "uglify-js": "^2.4.16",
+    "watch": "^0.14.0"
+  }
+}
