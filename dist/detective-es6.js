@@ -24,19 +24,24 @@
  *
  * @param {Element} x The Element to find.
  *
- * @returns {Position} The position
+ * @returns {Position|undefined}
+ * The position. Undefined is returned if the HTML contained something funky
+ * and couldn't be processed.
  */
 export var findOne = function(x) {
   var offset = 0
     , sibling = x.previousSibling;
 
   while (sibling) {
-    if (sibling.nodeType === 3) {
-      // Text
+    if (sibling.nodeType === Node.TEXT_NODE) {
       offset += sibling.length;
-    } else {
-      // Assuming Element
+    } else if (sibling.nodeType === Node.COMMENT_NODE) {
+      offset += (sibling.length + 7); // <!----> is 7
+    } else if (sibling.nodeType === Node.ELEMENT_NODE) {
       offset += sibling.outerHTML.length;
+    } else {
+      // If we encounter something else bail out
+      return;
     }
 
     sibling = sibling.previousSibling;
