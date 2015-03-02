@@ -48,27 +48,24 @@ describe('detective', function() {
       var el = setup('<div>\n \n\n  \n<p>Foo</p> \n\n  \n\n <p>Bar</p> </div>')
         , child = el.querySelector('p:nth-child(2)');
 
-      expect(test(findOne(child), el)).toBe(
-        '<div>\n \n\n  \n<p>Foo</p> \n\n  \n\n |<p>Bar</p>| </div>'
-      );
+      expect(test(findOne(child), el))
+        .toBe('<div>\n \n\n  \n<p>Foo</p> \n\n  \n\n |<p>Bar</p>| </div>');
     });
 
     it('handles tabs', function() {
       var el = setup('<div>\n\t\t<p>Foo</p>\n\t\t<p>Bar</p>\n</div>')
         , child = el.querySelector('p:nth-child(2)');
 
-      expect(test(findOne(child), el)).toBe(
-        '<div>\n\t\t<p>Foo</p>\n\t\t|<p>Bar</p>|\n</div>'
-      );
+      expect(test(findOne(child), el))
+        .toBe('<div>\n\t\t<p>Foo</p>\n\t\t|<p>Bar</p>|\n</div>');
     });
 
     it('handles comments', function() {
       var el = setup('<div><!----><p>Foo</p><!-- Baz --><p>Bar</p></div>')
         , child = el.querySelector('p:nth-child(2)');
 
-      expect(test(findOne(child), el)).toBe(
-        '<div><!----><p>Foo</p><!-- Baz -->|<p>Bar</p>|</div>'
-      );
+      expect(test(findOne(child), el))
+        .toBe('<div><!----><p>Foo</p><!-- Baz -->|<p>Bar</p>|</div>');
     });
 
     it('handles processing instructions', function() {
@@ -76,9 +73,8 @@ describe('detective', function() {
         , child = el.querySelector('p:nth-child(2)');
 
       // In a HTML context these get converted to comments, document that
-      expect(test(findOne(child), el)).toBe(
-        '<div><!--?thing?--><p>Foo</p>|<p>Bar</p>|</div>'
-      );
+      expect(test(findOne(child), el))
+        .toBe('<div><!--?thing?--><p>Foo</p>|<p>Bar</p>|</div>');
     });
 
     it('handles <html>', function() {
@@ -88,13 +84,11 @@ describe('detective', function() {
       var head = el.querySelector('head')
         , body = el.querySelector('body');
 
-      expect(test(findOne(head), el)).toBe(
-        '<html>|<head></head>|<body>Bar</body></html>'
-      );
+      expect(test(findOne(head), el))
+        .toBe('<html>|<head></head>|<body>Bar</body></html>');
 
-      expect(test(findOne(body), el)).toBe(
-        '<html><head></head>|<body>Bar</body>|</html>'
-      );
+      expect(test(findOne(body), el))
+        .toBe('<html><head></head>|<body>Bar</body>|</html>');
     });
   });
 
@@ -110,16 +104,54 @@ describe('detective', function() {
       var el = setup('<div><p>Foo</p><p>Bar</p></div>')
         , child = el.querySelector('p:nth-child(2)');
 
-      expect(test(find(child), el)).toBe('<div><p>Foo</p>|<p>Bar</p>|</div>');
+      expect(test(find(child, el), el))
+        .toBe('<div><p>Foo</p>|<p>Bar</p>|</div>');
     });
 
-    xit('works with two levels of nesting', function() {
+    it('works with two levels of nesting', function() {
       var el = setup('<div><p>Foo</p><div><b>Bar</b></div></div>')
         , child = el.querySelector('b');
 
-      expect(test(find(child), el)).toBe(
-        '<div><p>Foo</p><div>|<b>Bar</b>|</div></div>'
-      );
+      expect(test(find(child, el), el))
+        .toBe('<div><p>Foo</p><div>|<b>Bar</b>|</div></div>');
+    });
+
+    it('works with multiple levels of nesting', function() {
+      var el = setup('<div class="thing">'
+                   + '  <p>Foo</p>'
+                   + '  <div class="thing">'
+                   + '    <b>Bar</b>'
+                   + '    <div class="thing">'
+                   + '      <b>Bar</b>'
+                   + '      <div class="thing">'
+                   + '        <b>Bar</b>'
+                   + '      </div>'
+                   + '    </div>'
+                   + '  </div>'
+                   + '</div>')
+        , children = el.querySelectorAll('b')
+        , child = children[children.length - 1];
+
+      expect(test(find(child, el), el))
+        .toBe('<div class="thing">'
+            + '  <p>Foo</p>'
+            + '  <div class="thing">'
+            + '    <b>Bar</b>'
+            + '    <div class="thing">'
+            + '      <b>Bar</b>'
+            + '      <div class="thing">'
+            + '        |<b>Bar</b>|'
+            + '      </div>'
+            + '    </div>'
+            + '  </div>'
+            + '</div>');
+    });
+
+    it('returns a single level if no ancestor is given', function() {
+      var el = setup('<div><p>Foo</p><div><b>Bar</b></div></div>')
+        , child = el.querySelector('b');
+
+      expect(find(child)).toEqual({ start: 5, end: 15, length: 10 });
     });
   });
 });

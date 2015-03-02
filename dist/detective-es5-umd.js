@@ -94,28 +94,6 @@
 
     return pos;
   };
-
-  // var foo = document.querySelectorAll('.foo')[0]
-  //   , bar = foo.children[2];
-
-  // var container = document.body
-  //   , pos = find(bar, container);
-
-  // console.log('overall', pos);
-
-  // var before = document.querySelector('.before')
-  //   , after = document.querySelector('.after');
-
-  // before.innerText = foo.outerHTML;
-
-  // function splice(str, index, count, add) {
-  //   return str.slice(0, index) + (add || "") + str.slice(index + count);
-  // }
-
-  // var endMarked = splice(container.outerHTML, pos.end, 0, '{y}')
-  //   , startMarked = splice(endMarked, pos.start, 0, '{x}');
-
-  // after.innerText = startMarked;
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
